@@ -720,8 +720,7 @@ while running:
 
 	for pudge in pudge_list:
 		draw_hp_bar2(screen, pudge.rect.x, pudge.rect.y - 10 , pudge.hp)
-		#draw_text1(screen, str(int(pudge.hp)) + "/100", 10, pudge.rect.centerx, pudge.rect.y - 10)
-
+		
 	draw_mana_bar(screen, 20, 15, player1.mana)
 	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 45, 16)
 
