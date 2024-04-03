@@ -31,7 +31,7 @@ def draw_text2(surface, text, size, x, y):
 	surface.blit(text_surface, text_rect)
 
 def draw_hp_bar(surface, x, y, percentage):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -40,7 +40,7 @@ def draw_hp_bar(surface, x, y, percentage):
 	pygame.draw.rect(surface, WHITE, border, 2)
 
 def draw_hp_bar2(surface, x, y, percentage):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -49,7 +49,7 @@ def draw_hp_bar2(surface, x, y, percentage):
 	pygame.draw.rect(surface, BROWN, border, 2)
 
 def draw_mana_bar(surface, x, y, percentage):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -60,19 +60,16 @@ def draw_mana_bar(surface, x, y, percentage):
 class Player1(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		
 		self.image = pygame.transform.scale(pygame.image.load("img/crystal_maiden.png").convert(),(50,65))
 		self.image.set_colorkey(BLACK)
 		self.rect = self.image.get_rect()
-		self.rect.x = 300
-		self.rect.y = HEIGHT // 2
+		self.rect.x = 500
+		self.rect.y = 247
 		self.speed_x = 0
 		self.hp = 100
 		self.mana = 100
 		
-
 	def update(self):
-		
 		self.mana += 1/50
 		if self.mana < 0:
 			self.mana = 0
@@ -107,19 +104,16 @@ class Player1(pygame.sprite.Sprite):
 class Player2(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		#self.image = pygame.image.load("img/player2.png").convert()
 		self.image = pygame.transform.scale(pygame.image.load("img/crystal_maiden.png").convert(),(50,65))
 		self.image.set_colorkey(BLACK)
 		self.rect = self.image.get_rect()
-		self.rect.x = 1100
-		self.rect.y = HEIGHT // 2
+		self.rect.x = 900
+		self.rect.y = 247
 		self.speed_x = 0
 		self.hp = 100
 		self.mana = 100
 		
-
 	def update(self):
-		
 		self.mana += 1/50
 		if self.mana < 0:
 			self.mana = 0
@@ -165,9 +159,7 @@ def direction(a,b):
 	radio = (dx**2 + dy**2)**(1/2)
 	return dx/radio, dy/radio
 
-
 class Pudge(pygame.sprite.Sprite):
-
 	def __init__(self,target):
 		super().__init__()
 		self.image = pudge_images[0]
@@ -178,7 +170,6 @@ class Pudge(pygame.sprite.Sprite):
 		self.hp = 100
 		self.target = target
 		self.speed = 2
-
 
 	def update(self):
 		alist = [player1, player2]
@@ -386,7 +377,6 @@ while running:
 		score = 0
 
 	if game_over2:
-
 		show_game_over_screenp2()
 		screen.blit(background,(0,0))
 		game_over2 = False
@@ -459,13 +449,13 @@ while running:
 		start_time = pygame.time.get_ticks()
 		score = 0	
 		
-		
-	
 
 	clock.tick(60)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
+			pygame.quit()
+			sys.exit()
 
 
 	now = (pygame.time.get_ticks() - start_time)//1000
@@ -704,7 +694,6 @@ while running:
 		
 		player1.hp -= 0.8
 		
-		
 	# Checar colisiones - jugador2 - pudge
 	hits = pygame.sprite.spritecollide(player2, pudge_list, False)
 	for hit in hits:
@@ -718,23 +707,26 @@ while running:
 
 	
 	# Escudo.
-	draw_text2(screen, "P1", 20, 10, 6)
-	draw_text2(screen, "P2", 20, 600, 6)
+	draw_text1(screen, "P1", 20, 10, 6)
+	draw_text1(screen, "P2", 20, 600, 6)
 
 	draw_hp_bar(screen, 20, 5, player1.hp)
-	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 70, 6)
+	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 45, 6)
+	draw_hp_bar(screen, player1.rect.x, player1.rect.y - 10, player1.hp)
 
 	draw_hp_bar(screen, 615, 5, player2.hp)
-	draw_text2(screen, str(int(player2.hp))+ "/100", 10, 670, 6)
+	draw_text2(screen, str(int(player2.hp))+ "/100", 10, 645, 6)
+	draw_hp_bar(screen, player2.rect.x, player2.rect.y - 10, player2.hp)
 
-	draw_hp_bar2(screen, 400, 50, pudge.hp)
-	draw_text2(screen, str(int(pudge.hp)) + "/100", 10, 450, 51)
+	for pudge in pudge_list:
+		draw_hp_bar2(screen, pudge.rect.x, pudge.rect.y - 10 , pudge.hp)
+		#draw_text1(screen, str(int(pudge.hp)) + "/100", 10, pudge.rect.centerx, pudge.rect.y - 10)
 
 	draw_mana_bar(screen, 20, 15, player1.mana)
-	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 70, 16)
+	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 45, 16)
 
 	draw_mana_bar(screen, 615, 15, player2.mana)
-	draw_text1(screen, str(int(player2.mana))+ "/100", 10, 670, 16)
+	draw_text1(screen, str(int(player2.mana))+ "/100", 10, 645, 16)
 
 	#reloj
 	draw_text1(screen, str((((pygame.time.get_ticks() - start_time)//60000)+(60))%(60))+":" + str((((pygame.time.get_ticks() - start_time)//1000)+(60))%(60)), 30, 570, 50)

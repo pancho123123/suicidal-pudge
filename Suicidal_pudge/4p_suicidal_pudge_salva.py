@@ -30,7 +30,7 @@ def draw_text2(surface, text, size, x, y, color=BLACK):
 	draw_text(surface, text, size, x, y, color)
 
 def draw_hp_bar(surface, x, y, percentage, color1=GREEN, color2=WHITE):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -162,7 +162,6 @@ def u_direction(a,b):
 	return ux, uy
 
 class Pudge(pygame.sprite.Sprite):
-
 	def __init__(self):
 		super().__init__()
 		self.image = pudge_images[0]
@@ -250,10 +249,10 @@ while running:
 		players = pygame.sprite.Group()
 		all_sprites = pygame.sprite.Group()
 		pudge_list = pygame.sprite.Group()
-		player1 = Player(1, 400, 233)
-		player2 = Player(2, 800, 233)
-		player3 = Player(3, 400, 466)
-		player4 = Player(4, 800, 466)
+		player1 = Player(1, 500, 133)
+		player2 = Player(2, 900, 133)
+		player3 = Player(3, 500, 366)
+		player4 = Player(4, 900, 366)
 		pudge = Pudge()
 		players.add(player1, player2, player3, player4)
 		all_sprites.add(player1, player2, player3, player4, pudge)
@@ -269,6 +268,8 @@ while running:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
+			pygame.quit()
+			sys.exit()
 
 	now = (pygame.time.get_ticks() - start_time)//1000
 	if now % 121 in pudge_times[pudge_idx:]:
@@ -316,31 +317,36 @@ while running:
 	draw_text2(screen, "P4", 20, 900, 6)
 
 	draw_hp_bar(screen, 20, 5, player1.hp)
-	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 70, 6)
+	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 45, 6)
+	draw_hp_bar(screen, player1.rect.x, player1.rect.y - 10, player1.hp)
 
 	draw_hp_bar(screen, 315, 5, player2.hp)
-	draw_text2(screen, str(int(player2.hp))+ "/100", 10, 370, 6)
+	draw_text2(screen, str(int(player2.hp))+ "/100", 10, 345, 6)
+	draw_hp_bar(screen, player2.rect.x, player2.rect.y - 10, player2.hp)
 
 	draw_hp_bar(screen, 615, 5, player3.hp)
-	draw_text2(screen, str(int(player3.hp))+ "/100", 10, 670, 6)
+	draw_text2(screen, str(int(player3.hp))+ "/100", 10, 645, 6)
+	draw_hp_bar(screen, player3.rect.x, player3.rect.y - 10, player3.hp)
 
 	draw_hp_bar(screen, 915, 5, player4.hp)
-	draw_text2(screen, str(int(player4.hp))+ "/100", 10, 970, 6)
+	draw_text2(screen, str(int(player4.hp))+ "/100", 10, 945, 6)
+	draw_hp_bar(screen, player4.rect.x, player4.rect.y - 10, player4.hp)
 
-	draw_hp_bar2(screen, 410, 50, pudge.hp)
-	draw_text2(screen, str(int(pudge.hp)) + "/100", 10, 460, 51)
+	for pudge in pudge_list:
+		draw_hp_bar2(screen, pudge.rect.x, pudge.rect.y - 10 , pudge.hp)
+		#draw_text1(screen, str(int(pudge.hp)) + "/100", 10, pudge.rect.centerx + 20, pudge.rect.y - 10)
 
 	draw_mana_bar(screen, 20, 15, player1.mana)
-	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 70, 16)
+	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 45, 16)
 
 	draw_mana_bar(screen, 315, 15, player2.mana)
-	draw_text1(screen, str(int(player2.mana))+ "/100", 10, 370, 16)
+	draw_text1(screen, str(int(player2.mana))+ "/100", 10, 345, 16)
 
 	draw_mana_bar(screen, 615, 15, player3.mana)
-	draw_text1(screen, str(int(player3.mana))+ "/100", 10, 670, 16)
+	draw_text1(screen, str(int(player3.mana))+ "/100", 10, 645, 16)
 
 	draw_mana_bar(screen, 915, 15, player4.mana)
-	draw_text1(screen, f"{player4.mana}/100", 10, 970, 16)
+	draw_text1(screen, f"{player4.mana}/100", 10, 945, 16)
 
 	#reloj
 	draw_text1(screen, f"{((now//60)+60)%60}:{(now+60)%(60)}", 30, 570, 50)

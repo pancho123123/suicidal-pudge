@@ -31,7 +31,7 @@ def draw_text2(surface, text, size, x, y):
 	surface.blit(text_surface, text_rect)
 
 def draw_hp_bar(surface, x, y, percentage):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -40,7 +40,7 @@ def draw_hp_bar(surface, x, y, percentage):
 	pygame.draw.rect(surface, WHITE, border, 2)
 
 def draw_hp_bar2(surface, x, y, percentage):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -49,7 +49,7 @@ def draw_hp_bar2(surface, x, y, percentage):
 	pygame.draw.rect(surface, BROWN, border, 2)
 
 def draw_mana_bar(surface, x, y, percentage):
-	BAR_LENGHT = 100
+	BAR_LENGHT = 50
 	BAR_HEIGHT = 10
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
@@ -60,7 +60,6 @@ def draw_mana_bar(surface, x, y, percentage):
 class Player1(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		
 		self.image = pygame.transform.scale(pygame.image.load("img/crystal_maiden.png").convert(),(50,65))
 		self.image.set_colorkey(BLACK)
 		self.rect = self.image.get_rect()
@@ -70,9 +69,7 @@ class Player1(pygame.sprite.Sprite):
 		self.hp = 100
 		self.mana = 100
 		
-
 	def update(self):
-		
 		self.mana += 1/50
 		if self.mana < 0:
 			self.mana = 0
@@ -104,8 +101,6 @@ class Player1(pygame.sprite.Sprite):
 		if self.rect.bottom > 550:
 			self.rect.bottom = 550
 
-
-
 def distance(a,b):
 	#pitagoras distance between a and b
 	dx = b.rect.centerx - a.rect.centerx
@@ -121,7 +116,6 @@ def direction(a,b):
 
 
 class Pudge(pygame.sprite.Sprite):
-
 	def __init__(self,target):
 		super().__init__()
 		self.image = pudge_images[0]
@@ -133,9 +127,7 @@ class Pudge(pygame.sprite.Sprite):
 		self.target = target
 		self.speed = 2
 
-
 	def update(self):
-		
 		self.hp -= 0.3
 		if self.hp < 0:
 			self.hp = 0
@@ -159,15 +151,12 @@ class Pudge(pygame.sprite.Sprite):
 		except(UnboundLocalError):
 			pass
 		
-
 def show_go_screen():
-	
 	screen.fill(BLACK)#(background, [0,0])
 	draw_text1(screen, "Suicidal Pudge", 65, WIDTH // 2, HEIGHT // 4)
 	draw_text1(screen, "Stay away from suicidal pudge", 20, WIDTH // 2, HEIGHT // 2)
 	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
 	#draw_text(screen, "Created by: Francisco Carvajal", 10,  60, 625)
-	
 	
 	pygame.display.flip()
 	waiting = True
@@ -180,12 +169,10 @@ def show_go_screen():
 				if event.key == pygame.K_q:
 					waiting = False
 
-
 pudge_images = []
 pudge_list = ["img/pudge.png"]
 for img in pudge_list:
 	pudge_images.append(pygame.transform.scale(pygame.image.load(img).convert(),(50,65)))
-
 
 def show_game_over_screenp1():
 	screen.fill(BLACK)
@@ -304,7 +291,6 @@ while running:
 		player1 = Player1()
 		all_sprites.add(player1)
 		
-
 		pudge = Pudge(any)
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
@@ -312,7 +298,6 @@ while running:
 		
 		score = 0
 	
-
 	if start:
 		show_go_screen()
 		start = False
@@ -321,18 +306,18 @@ while running:
 		player1 = Player1()
 		all_sprites.add(player1)
 		
-
 		pudge = Pudge(any)
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
 		start_time = pygame.time.get_ticks()	
 		score = 0
 		
-
 	clock.tick(60)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			running = False
+			pygame.quit()
+			sys.exit()
 	
 
 	now = (pygame.time.get_ticks() - start_time)//1000
@@ -554,45 +539,38 @@ while running:
 			all_sprites.add(pudge)
 			pudge_list.add(pudge)
 	
-
 	if player1.hp <= 0:
 		score += now
 		game_over1 = True
 	
-	
 	all_sprites.update()
-	
 	
 	# Checar colisiones - jugador1 - pudge
 	hits = pygame.sprite.spritecollide(player1, pudge_list, False)
 	for hit in hits:
 		
 		player1.hp -= 0.8
-		
 
 	screen.blit(background, [0, 0])
 
 	all_sprites.draw(screen)
-
 		
 	# Escudo.
 	draw_text1(screen, "P1", 20, 10, 6)
 	
-
 	draw_hp_bar(screen, 20, 5, player1.hp)
-	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 70, 6)
+	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 45, 6)
+	draw_hp_bar(screen, player1.rect.x, player1.rect.y - 10, player1.hp)
 
-
-	draw_hp_bar2(screen, 600, 35, pudge.hp)
-	draw_text2(screen, str(int(pudge.hp)) + "/100", 10, 650, 36)
+	for pudge in pudge_list:
+		draw_hp_bar2(screen, pudge.rect.x, pudge.rect.y - 10 , pudge.hp)
+		#draw_text1(screen, str(int(pudge.hp)) + "/100", 10, pudge.rect.centerx, pudge.rect.y - 10)
 
 	draw_mana_bar(screen, 20, 15, player1.mana)
-	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 70, 16)
-
+	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 45, 16)
 
 	#reloj
 	draw_text1(screen, str((((pygame.time.get_ticks() - start_time)//60000)+(60))%(60))+":" + str((((pygame.time.get_ticks() - start_time)//1000)+(60))%(60)), 30, 570, 50)
-	
 
 	pygame.display.flip()
 pygame.quit()
