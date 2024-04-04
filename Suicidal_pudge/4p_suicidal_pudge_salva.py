@@ -38,11 +38,20 @@ def draw_hp_bar(surface, x, y, percentage, color1=GREEN, color2=WHITE):
 	pygame.draw.rect(surface, color1, fill)
 	pygame.draw.rect(surface, color2, border, 2)
 
+def draw_hp_bar1(surface, x, y, percentage, color1=GREEN, color2=WHITE):
+	BAR_LENGHT = 100
+	BAR_HEIGHT = 10
+	fill = (percentage / 100) * BAR_LENGHT
+	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
+	fill = pygame.Rect(x, y, fill, BAR_HEIGHT)
+	pygame.draw.rect(surface, color1, fill)
+	pygame.draw.rect(surface, color2, border, 2)
+
 def draw_hp_bar2(surface, x, y, percentage):
 	draw_hp_bar(surface, x, y, percentage, color1=BROWN, color2=BROWN)
 
 def draw_mana_bar(surface, x, y, percentage):
-	draw_hp_bar(surface, x, y, percentage, color1=BLUE)
+	draw_hp_bar1(surface, x, y, percentage, color1=BLUE)
 
 player_keys = [
 	#Player1 keys
@@ -316,23 +325,23 @@ while running:
 	draw_text2(screen, "P3", 20, 600, 6)
 	draw_text2(screen, "P4", 20, 900, 6)
 
-	draw_hp_bar(screen, 20, 5, player1.hp)
-	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 45, 6)
+	draw_hp_bar1(screen, 20, 5, player1.hp)
+	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 70, 6)
 	if player1.hp > 0:
 		draw_hp_bar(screen, player1.rect.x, player1.rect.y - 10, player1.hp)
 
-	draw_hp_bar(screen, 315, 5, player2.hp)
-	draw_text2(screen, str(int(player2.hp))+ "/100", 10, 345, 6)
+	draw_hp_bar1(screen, 315, 5, player2.hp)
+	draw_text2(screen, str(int(player2.hp))+ "/100", 10, 365, 6)
 	if player2.hp > 0:
 		draw_hp_bar(screen, player2.rect.x, player2.rect.y - 10, player2.hp)
 
-	draw_hp_bar(screen, 615, 5, player3.hp)
-	draw_text2(screen, str(int(player3.hp))+ "/100", 10, 645, 6)
+	draw_hp_bar1(screen, 615, 5, player3.hp)
+	draw_text2(screen, str(int(player3.hp))+ "/100", 10, 665, 6)
 	if player3.hp > 0:
 		draw_hp_bar(screen, player3.rect.x, player3.rect.y - 10, player3.hp)
 
-	draw_hp_bar(screen, 915, 5, player4.hp)
-	draw_text2(screen, str(int(player4.hp))+ "/100", 10, 945, 6)
+	draw_hp_bar1(screen, 915, 5, player4.hp)
+	draw_text2(screen, str(int(player4.hp))+ "/100", 10, 965, 6)
 	if player4.hp > 0:
 		draw_hp_bar(screen, player4.rect.x, player4.rect.y - 10, player4.hp)
 
@@ -340,16 +349,16 @@ while running:
 		draw_hp_bar2(screen, pudge.rect.x, pudge.rect.y - 10 , pudge.hp)
 		
 	draw_mana_bar(screen, 20, 15, player1.mana)
-	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 45, 16)
+	draw_text1(screen, str(int(player1.mana))+ "/100", 10, 70, 16)
 
 	draw_mana_bar(screen, 315, 15, player2.mana)
-	draw_text1(screen, str(int(player2.mana))+ "/100", 10, 345, 16)
+	draw_text1(screen, str(int(player2.mana))+ "/100", 10, 365, 16)
 
 	draw_mana_bar(screen, 615, 15, player3.mana)
-	draw_text1(screen, str(int(player3.mana))+ "/100", 10, 645, 16)
+	draw_text1(screen, str(int(player3.mana))+ "/100", 10, 665, 16)
 
 	draw_mana_bar(screen, 915, 15, player4.mana)
-	draw_text1(screen, f"{player4.mana}/100", 10, 945, 16)
+	draw_text1(screen, f"{player4.mana}/100", 10, 965, 16)
 
 	#reloj
 	draw_text1(screen, f"{((now//60)+60)%60}:{(now+60)%(60)}", 30, 570, 50)
