@@ -149,11 +149,14 @@ class Pudge(pygame.sprite.Sprite):
 		self.rect.centerx += self.speed*x
 		self.rect.centery += self.speed*y
 
-		
+with open("data1.txt", mode="r") as file:
+	high_score = int(file.read())
+
 def show_go_screen():
 	screen.fill(BLACK)
 	draw_text1(screen, "Suicidal Pudge", 65, WIDTH // 2, HEIGHT // 4)
 	draw_text1(screen, "Stay away from suicidal pudge", 20, WIDTH // 2, HEIGHT // 2)
+	draw_text1(screen, "Record: " + str(high_score) + " segundos", 80, WIDTH // 2, HEIGHT*3//5)
 	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
 	
 	pygame.display.flip()
@@ -172,15 +175,13 @@ pudge_list = ["img/pudge.png"]
 for img in pudge_list:
 	pudge_images.append(pygame.transform.scale(pygame.image.load(img).convert(),(50,65)))
 
-with open("data1.txt", "r") as file:
-	high_score = int(file.read())
 
 def show_game_over_screen():
 	screen.fill(BLACK)
-	with open("data1.txt", "r") as file:
+	with open("data1.txt", mode="r") as file:
 		high_score = int(file.read())
 	if score > high_score:
-		draw_text1(screen, "¡high score!", 60, WIDTH  // 2, HEIGHT * 1/4)
+		draw_text1(screen, "¡high score!", 60, WIDTH  // 2, HEIGHT //4)
 		draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, HEIGHT // 2)
 		draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
 	else:
@@ -213,7 +214,7 @@ pudge_idx = 0
 while running:
 	if game_over:
 		show_game_over_screen()
-		with open("data1.txt", "w") as file:
+		with open("data1.txt", mode="w") as file:
 			if score > high_score:
 				high_score = score
 				file.write(str(score))

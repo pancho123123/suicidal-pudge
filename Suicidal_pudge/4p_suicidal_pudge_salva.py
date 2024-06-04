@@ -173,7 +173,7 @@ def u_direction(a,b):
 class Pudge(pygame.sprite.Sprite):
 	def __init__(self):
 		super().__init__()
-		self.image = pudge_images[0]
+		self.image = pygame.transform.scale(pygame.image.load("img/pudge.png").convert(),(50,65))
 		self.image.set_colorkey(WHITE)
 		self.rect = self.image.get_rect()
 		self.rect.x = random.randrange(300, WIDTH - 30)
@@ -183,9 +183,8 @@ class Pudge(pygame.sprite.Sprite):
 
 	def update(self):
 		self.hp -= 0.3
-		if self.hp < 0:
+		if self.hp <= 0:
 			self.hp = 0
-		if self.hp == 0:
 			self.kill()
 		
 		if len(players) > 0:
@@ -193,7 +192,10 @@ class Pudge(pygame.sprite.Sprite):
 			x,y = u_direction(self, target)
 			self.rect.centerx += self.speed*x
 			self.rect.centery += self.speed*y
-			
+
+with open("data4.txt", mode="r") as file:
+	high_score = int(file.read())
+
 def show_go_screen():
 	screen.fill(BLACK)#(background, [0,0])
 	draw_text1(screen, "Suicidal Pudge", 65, WIDTH // 2, HEIGHT // 4)
@@ -210,13 +212,19 @@ def show_go_screen():
 				if event.key == pygame.K_q:
 					waiting = False
 
-pudge_images = [pygame.transform.scale(pygame.image.load(img).convert(),(50,65))
-				for img in ["img/pudge.png"]]
 
 def show_game_over_screen(player_n=1):
 	screen.fill(BLACK)
-	draw_text1(screen, f"Player {player_n} WINS", 20, WIDTH // 2, HEIGHT // 2)
-	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+	with open("data4.txt", mode="r") as file:
+		high_score = int(file.read())
+		if score > high_score:
+			draw_text1(screen, "¡high score!", 60, WIDTH  // 2, HEIGHT //4)
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, f"Player {player_n} WINS", 20, WIDTH // 2, HEIGHT // 2)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+		else:
+			draw_text1(screen, f"Player {player_n} WINS", 20, WIDTH // 2, HEIGHT // 2)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
 	pygame.display.flip()
 	waiting = True
 	while waiting:
@@ -250,6 +258,7 @@ pudge_times = [
 		101,103,105,107,109,111,113,115,116,117,118,119,120,121
 		]
 pudge_idx = 0
+score = 0
 while running:
 	
 	if start:
@@ -269,9 +278,15 @@ while running:
 		start_time = pygame.time.get_ticks()
 
 	if len(players) == 1:
+		score += now
 		game_over(players.sprites()[0].number)
+		with open("data4.txt", mode="w") as file:
+			if score > high_score:
+				high_score = score
+				file.write(str(score))
 		start_time = pygame.time.get_ticks()
 		pudge_idx = 0
+		score = 0
 
 	clock.tick(60)
 	for event in pygame.event.get():
@@ -320,10 +335,10 @@ while running:
 	all_sprites.draw(screen)
 	
 	# Escudo.
-	draw_text2(screen, "P1", 20, 10, 6)
-	draw_text2(screen, "P2", 20, 300, 6)
-	draw_text2(screen, "P3", 20, 600, 6)
-	draw_text2(screen, "P4", 20, 900, 6)
+	draw_text1(screen, "P1", 20, 10, 6)
+	draw_text1(screen, "P2", 20, 300, 6)
+	draw_text1(screen, "P3", 20, 600, 6)
+	draw_text1(screen, "P4", 20, 900, 6)
 
 	draw_hp_bar1(screen, 20, 5, player1.hp)
 	draw_text2(screen, str(int(player1.hp)) + "/100", 10, 70, 6)

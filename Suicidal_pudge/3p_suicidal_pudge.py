@@ -50,7 +50,7 @@ def draw_hp_bar1(surface, x, y, percentage):
 
 def draw_hp_bar2(surface, x, y, percentage):
 	BAR_LENGHT = 50
-	BAR_HEIGHT = 10
+	BAR_HEIGHT = 7
 	fill = (percentage / 100) * BAR_LENGHT
 	border = pygame.Rect(x, y, BAR_LENGHT, BAR_HEIGHT)
 	fill = pygame.Rect(x, y, fill, BAR_HEIGHT)
@@ -220,52 +220,43 @@ def direction(a,b):
 	dx = b.rect.centerx - a.rect.centerx
 	dy = b.rect.centery - a.rect.centery
 	radio = (dx**2 + dy**2)**(1/2)
-	return dx/radio, dy/radio
+	if radio != 0:
+		x, y = (dx/radio, dy/radio)
+	else:
+		x, y = (0, 0)
+	return x, y
 
 class Pudge(pygame.sprite.Sprite):
-	def __init__(self,target):
+	def __init__(self):
 		super().__init__()
-		self.image = pudge_images[0]
+		self.image = pygame.transform.scale(pygame.image.load("img/pudge.png").convert(),(50,65))
 		self.image.set_colorkey(WHITE)
 		self.rect = self.image.get_rect()
 		self.rect.x = random.randrange(300, WIDTH - 30)
 		self.rect.y = random.randrange(50, HEIGHT - 250)
 		self.hp = 100
-		self.target = None
 		self.speed = 2
 
 	def update(self):
 		self.hp -= 0.3
-		if self.hp < 0:
+		if self.hp <= 0:
 			self.hp = 0
-		if self.hp == 0:
 			self.kill()
-		target_list = [player1, player2, player3]
-		target_list = [t for t in target_list if t.hp >0]
-		distance_list = [(distance(self,t),t) for t in target_list]
-		if len(distance_list)==0:
-			distance_list = [(0,self.target)]
-		self.target = sorted(distance_list, key=lambda x: x[0])[0][1]
-		if (self.target.rect.centerx - self.rect.centerx) == 0:
-			if self.target.rect.centery > self.rect.centery:
-				self.rect.centery += self.speed 
-			elif self.rect.centery > self.target.rect.centery:
-				self.rect.centery -= self.speed
-			else:
-				self.rect.centery += 0
-		elif (self.target.rect.centerx - self.rect.centerx) != 0:
-			x,y = direction(self, self.target)
+		
+		if len(players) > 0:
+			target = sorted(players, key = lambda x: distance(self,x))[0]
+			x,y = direction(self, target)
 			self.rect.centerx += self.speed*x
 			self.rect.centery += self.speed*y
 
+with open("data3.txt", mode="r") as file:
+	high_score = int(file.read())
+
 def show_go_screen():
-	
-	screen.fill(BLACK)#(background, [0,0])
+	screen.fill(BLACK)
 	draw_text1(screen, "Suicidal Pudge", 65, WIDTH // 2, HEIGHT // 4)
 	draw_text1(screen, "Stay away from suicidal pudge", 20, WIDTH // 2, HEIGHT // 2)
 	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
-	#draw_text(screen, "Created by: Francisco Carvajal", 10,  60, 625)
-	
 	
 	pygame.display.flip()
 	waiting = True
@@ -279,19 +270,20 @@ def show_go_screen():
 					waiting = False
 
 
-pudge_images = []
-pudge_list = ["img/pudge.png"]
-for img in pudge_list:
-	pudge_images.append(pygame.transform.scale(pygame.image.load(img).convert(),(50,65)))
-
-
 def show_game_over_screenp1():
 	screen.fill(BLACK)
-	#draw_text1(screen, "Qop", 65, WIDTH // 2, HEIGHT // 4)
-	draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
-	draw_text1(screen, "Player 1 WINS", 20, WIDTH // 2, 400)
-	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
-
+	with open("data3.txt", mode="r") as file:
+		high_score = int(file.read())
+		if score > high_score:
+			draw_text1(screen, "¡high score!", 60, WIDTH  // 2, HEIGHT //4)
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, "Player 1 WINS", 20, WIDTH // 2, 400)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+		else:
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, "Player 1 WINS", 20, WIDTH // 2, 400)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+	
 	pygame.display.flip()
 	waiting = True
 	while waiting:
@@ -305,10 +297,17 @@ def show_game_over_screenp1():
 
 def show_game_over_screenp2():
 	screen.fill(BLACK)
-	#draw_text1(screen, "Qop", 65, WIDTH // 2, HEIGHT // 4)
-	draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
-	draw_text1(screen, "Player 2 WINS", 20, WIDTH // 2, 400)
-	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+	with open("data3.txt", mode="r") as file:
+		high_score = int(file.read())
+		if score > high_score:
+			draw_text1(screen, "¡high score!", 60, WIDTH  // 2, HEIGHT //4)
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, "Player 2 WINS", 20, WIDTH // 2, 400)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+		else:
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, "Player 2 WINS", 20, WIDTH // 2, 400)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
 
 	pygame.display.flip()
 	waiting = True
@@ -323,9 +322,17 @@ def show_game_over_screenp2():
 
 def show_game_over_screenp3():
 	screen.fill(BLACK)
-	#draw_text1(screen, "Qop", 65, WIDTH // 2, HEIGHT // 4)
-	draw_text1(screen, "Player 3 WINS", 20, WIDTH // 2, HEIGHT // 2)
-	draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+	with open("data3.txt", mode="r") as file:
+		high_score = int(file.read())
+		if score > high_score:
+			draw_text1(screen, "¡high score!", 60, WIDTH  // 2, HEIGHT //4)
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, "Player 3 WINS", 20, WIDTH // 2, 400)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
+		else:
+			draw_text1(screen, "Record: " + str(score) + " segundos", 80, WIDTH // 2, 250)
+			draw_text1(screen, "Player 3 WINS", 20, WIDTH // 2, 400)
+			draw_text1(screen, "Press Q", 20, WIDTH // 2, HEIGHT * 3/4)
 
 	pygame.display.flip()
 	waiting = True
@@ -354,17 +361,23 @@ pudge_idx = 0
 while running:
 	if game_over1:
 		show_game_over_screenp1()
+		with open("data3.txt", mode="w") as file:
+			if score > high_score:
+				high_score = score
+				file.write(str(score))
 		screen.blit(background,(0,0))
 		game_over1 = False
 		
 		all_sprites = pygame.sprite.Group()
+		players = pygame.sprite.Group()
 		pudge_list = pygame.sprite.Group()
 		player1 = Player1()
 		player2 = Player2()
 		player3 = Player3()
+		players.add(player1, player2, player3)
 		all_sprites.add(player1, player2, player3)
 		
-		pudge = Pudge(any)
+		pudge = Pudge()
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
 		start_time = pygame.time.get_ticks()
@@ -373,17 +386,23 @@ while running:
 
 	if game_over2:
 		show_game_over_screenp2()
+		with open("data3.txt", mode="w") as file:
+			if score > high_score:
+				high_score = score
+				file.write(str(score))
 		screen.blit(background,(0,0))
 		game_over2 = False
 		
 		all_sprites = pygame.sprite.Group()
+		players = pygame.sprite.Group()
 		pudge_list = pygame.sprite.Group()
 		player1 = Player1()
 		player2 = Player2()
 		player3 = Player3()
+		players.add(player1, player2, player3)
 		all_sprites.add(player1, player2, player3)
 		
-		pudge = Pudge(any)
+		pudge = Pudge()
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
 		start_time = pygame.time.get_ticks()
@@ -392,17 +411,23 @@ while running:
 
 	if game_over3:
 		show_game_over_screenp3()
+		with open("data3.txt", mode="w") as file:
+			if score > high_score:
+				high_score = score
+				file.write(str(score))
 		screen.blit(background,(0,0))
 		game_over3 = False
 		
 		all_sprites = pygame.sprite.Group()
+		players = pygame.sprite.Group()
 		pudge_list = pygame.sprite.Group()
 		player1 = Player1()
 		player2 = Player2()
 		player3 = Player3()
+		players.add(player1, player2, player3)
 		all_sprites.add(player1, player2, player3)
 
-		pudge = Pudge(any)
+		pudge = Pudge()
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
 		start_time = pygame.time.get_ticks()
@@ -413,13 +438,15 @@ while running:
 		show_go_screen()
 		start = False
 		all_sprites = pygame.sprite.Group()
+		players = pygame.sprite.Group()
 		pudge_list = pygame.sprite.Group()
 		player1 = Player1()
 		player2 = Player2()
 		player3 = Player3()
+		players.add(player1, player2, player3)
 		all_sprites.add(player1, player2, player3)
 
-		pudge = Pudge(any)
+		pudge = Pudge()
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
 		start_time = pygame.time.get_ticks()
@@ -434,7 +461,7 @@ while running:
 
 	now = (pygame.time.get_ticks() - start_time)//1000
 	if now % 121 in pudge_times[pudge_idx:]:
-		pudge = Pudge(any)
+		pudge = Pudge()
 		all_sprites.add(pudge)
 		pudge_list.add(pudge)
 		pudge_idx += 1
